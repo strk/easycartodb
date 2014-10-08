@@ -1,6 +1,6 @@
 This repository is just a container for the repositories of the servers
-making up a simple instance of a CartoDB service, and scripts to get the
-instance up and running in a quick way:
+making up a simple instance of a CartoDB service, and scripts to get a
+development instance quickly up and running:
 
  `./configure && make && ./start.sh`
 
