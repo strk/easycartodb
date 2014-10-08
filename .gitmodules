@@ -1,10 +1,9 @@
 [submodule "rails"]
 	path = rails-app
-	#url = ../cartodb/cartodb/.git
   url = git://github.com/strk/cartodb.git
 [submodule "tiler"]
 	path = map-api
-	url = ../Windshaft-cartodb/Windshaft-cartodb/.git
+  url = git://github.com/strk/Windshaft-CartoDB.git
 [submodule "sql-api"]
 	path = sql-api
-	url = ../CartoDB-SQL-API/CartoDB-SQL-API/.git
+  url = git://github.com/strk/CartoDB-SQL-API.git
