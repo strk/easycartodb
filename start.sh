@@ -20,29 +20,68 @@ fi
 
 #sudo varnishd -a localhost:6081 -f varnish-default.vcl -T localhost:6082
 
+mkdir -p pids
+mkdir -p logs
 
-# TODO: check that the app was not started already
+
 {
 cd rails-app
-#redis-server > /tmp/redis.log &
-#sleep 1
-VVERBOSE=true QUEUE=* bundle exec rake environment resque:work > /tmp/resque.log &
-rails s > /tmp/rails.log &
-cd -
+
+pid=`cat ../pids/resque.pid 2> /dev/null`
+if test -n "$pid" && ps "$pid" > /dev/null; then
+  echo "Resque is already running with pid $pid, will not start another"
+else
+  VVERBOSE=true QUEUE=* bundle exec rake environment resque:work > ../logs/resque.log &
+  pid=$!
+  echo "${pid}" > ../pids/resque.pid 2>&1
+fi
+
+pid=`cat ../pids/rails.pid 2> /dev/null`
+if test -n "$pid" && ps "$pid" > /dev/null; then
+  echo "Rails is already running as pid $pid, will not start another"
+else
+  rails s > ../logs/rails.log &
+  pid=$!
+  echo "${pid}" > ../pids/rails.pid 2>&1
+fi
+
+cd - > /dev/null
 }
 
-# TODO: check that the app was not started already
 {
 cd map-api
-node app.js development : tiler > /tmp/tiler.log 2>&1 &
-cd -
+
+pid=`cat ../pids/mapapi.pid 2> /dev/null`
+if test -n "$pid" && ps "$pid" > /dev/null; then
+  echo "MAP-API is already running as pid $pid, will not start another"
+else
+	rm -rf logs
+  ln -s ../logs logs
+  node app.js development : tiler > logs/mapapi.log 2>&1 &
+  pid=$!
+  echo "${pid}" > ../pids/mapapi.pid
+fi
+
+cd - > /dev/null
 }
 
-# TODO: check that the app was not started already
 {
 cd sql-api
-node app.js development : sqlapi > /tmp/sqlapi.log 2>&1 &
-cd -
+pid=`cat ../pids/sqlapi.pid 2> /dev/null`
+if test -n "$pid" && ps "$pid" > /dev/null; then
+  echo "SQL-API is already running as pid $pid, will not start another"
+else
+	rm -rf logs
+  ln -s ../logs logs
+  node app.js development : sqlapi > logs/sqlapi.log 2>&1 &
+  pid=$!
+  echo "${pid}" > ../pids/sqlapi.pid
+fi
+
+cd - > /dev/null
 }
 
-echo "Service should be ready in a moment on http://dev.localhost.lan:3000"
+sleep 1
+echo
+echo "Service should be ready in a moment on http://dev.localhost.lan:3000/dashboard"
+echo
