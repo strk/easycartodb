@@ -2,9 +2,11 @@ This repository is just a container for the repositories of the servers
 making up a simple instance of a CartoDB service, and scripts to get the
 instance up and running in a quick way:
 
- ./configure && make && ./start.sh
+ `./configure && make && ./start.sh`
 
 To check everything is working as expected, run `make check`.
+
+For more info about CartoDB: http://www.cartodb.com
 
 # CONTRIBUTING
 
@@ -29,5 +31,3 @@ Or to the fork, if not still in sync with the upstream:
   https://github.com/strk/Windshaft-cartodb
   https://github.com/strk/CartoDB-SQL-API
   https://github.com/strk/CartoDB
-
---strk;
