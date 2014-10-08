@@ -2,7 +2,7 @@ This repository is just a container for the repositories of the servers
 making up a simple instance of a CartoDB service, and scripts to get a
 development instance quickly up and running:
 
- `./configure && make && ./start.sh`
+ `./configure && make && ./start`
 
 To check everything is working as expected, run: `make check`.
 
