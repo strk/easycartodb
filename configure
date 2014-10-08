@@ -1,0 +1,51 @@
+#!/bin/sh
+
+#
+# This script creates config/environments/*.js files using
+# config/environments/*.js.example files as input and performing
+# settings substitutions.
+#
+# It relies on a known format of the .js.example files which haven't
+# been made easier to parse to still let humans copy them manually and
+# do further editing or leave them as such to get the same setup as before
+# the introduction of this script.
+#
+# The script is a work in progress. Available switches are printed
+# by invoking with the --help switch. More switches will be added
+# as the need/request for them arises.
+#
+# --strk(2012-07-23)
+#
+
+PGPORT=
+SQLAPI_PORT=
+MAPAPI_PORT=
+MAPNIK_VERSION=
+ENVIRONMENT=development
+
+STATUS="$0 $*"
+
+usage() {
+  echo "Usage: $0 [OPTION]"
+  echo 
+  echo "Configuration:"
+  echo "  --help                        display this help and exit"
+  echo "  --with-pgport=NUM             access PostgreSQL server on TCP port NUM [$PGPORT]"
+  echo "  --with-pguser=STRING          access PostgreSQL as user STRING [$PGUSER]"
+  echo "  --with-sqlapi-port=NUM        access SQL-API server on TCP port NUM [$SQLAPI_PORT]"
+  echo "  --with-mapapi-port=NUM        access MAP-API server on TCP port NUM [$MAPAPI_PORT]"
+  echo "  --with-mapnik-version=STRING  set mapnik version string [$MAPNIK_VERSION]"
+  #echo "  --environment=STRING          set output environment name [$ENVIRONMENT]"
+}
+
+echo "Configuring map-api... "
+cd map-api;
+./configure $@ || exit 1;
+./configure $@ --environment=test || exit 1;
+cd -
+
+echo "Configuring sql-api... "
+cd sql-api; ./configure $@ || exit 1; cd -
+
+echo "Configuring rails-app... "
+cd rails-app; ./configure $@ || exit 1; cd -
