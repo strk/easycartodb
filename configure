@@ -1,22 +1,5 @@
 #!/bin/sh
 
-#
-# This script creates config/environments/*.js files using
-# config/environments/*.js.example files as input and performing
-# settings substitutions.
-#
-# It relies on a known format of the .js.example files which haven't
-# been made easier to parse to still let humans copy them manually and
-# do further editing or leave them as such to get the same setup as before
-# the introduction of this script.
-#
-# The script is a work in progress. Available switches are printed
-# by invoking with the --help switch. More switches will be added
-# as the need/request for them arises.
-#
-# --strk(2012-07-23)
-#
-
 PGPORT=
 SQLAPI_PORT=
 MAPAPI_PORT=
@@ -24,6 +7,19 @@ MAPNIK_VERSION=
 ENVIRONMENT=development
 
 STATUS="$0 $*"
+
+# check requirements
+node_version=`node --version`
+if test $? -gt 0 -o -z "${node_version}"; then
+  echo "Required node.js (version 0.10+) not found"
+  exit 1
+fi
+# format: v0.10.26
+node_version_minor=`echo "${node_version}" | sed 's/^v0\.\([0-9]*\).*/\1/'`
+if test "$node_version_minor" -lt 10; then
+  echo "Required node.js version is 0.10+, ${node_version} found"
+  exit 1
+fi
 
 usage() {
   echo "Usage: $0 [OPTION]"
