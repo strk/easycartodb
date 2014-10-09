@@ -21,6 +21,28 @@ if test "$node_version_minor" -lt 10; then
   exit 1
 fi
 
+ruby_version=`ruby --version`
+if test $? -gt 0 -o -z "${node_version}"; then
+  echo "Required ruby (version 1.9.3+) not found"
+  exit 1
+fi
+# format: ruby 1.9.3p484
+ruby_version_major=`echo "${ruby_version}" | sed 's/^ruby \([0-9]*\)\.[0-9]*.*/\1/'`
+ruby_version_minor=`echo "${ruby_version}" | sed 's/^ruby [0-9]*\.\([0-9]*\).*/\1/'`
+ruby_version_patch=`echo "${ruby_version}" | sed 's/^ruby [0-9]*\.[0-9]*\.\([0-9]*\).*/\1/'`
+if test "$ruby_version_major" -lt 1 ||
+   ( test "$ruby_version_major" -eq 1 &&
+     test "$ruby_version_minor" -lt 9  ) ||
+   ( test "$ruby_version_major" -eq 1 &&
+     test "$ruby_version_minor" -eq 9 &&
+     test "$ruby_version_patch" -lt 3  )
+then
+  echo "Required ruby version is 1.9.3+, ${ruby_version_major}.${ruby_version_minor}.${ruby_version_patch} found"
+  exit 1
+else
+  echo "Ruby ${ruby_version_major}.${ruby_version_minor}.${ruby_version_patch} found"
+fi
+
 usage() {
   echo "Usage: $0 [OPTION]"
   echo 
